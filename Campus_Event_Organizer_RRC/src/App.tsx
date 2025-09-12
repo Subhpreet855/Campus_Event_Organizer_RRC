@@ -1,35 +1,29 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
-
+import "../src/App.css";
+import rrcLogo from "../src/assets/logo.jpg";
+ 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+    <div className="app">
+      <header>
+        <img src={rrcLogo} alt="Red River College Logo" className="logo" />
+        <h1>Campus Event Organizer - Red River College</h1>
+      </header>
+ 
+      <main>
+        <p>Welcome! Explore upcoming campus events here.</p>
+      </main>
+ 
+      <footer>
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+          <strong>Team: CODING DOCTORS</strong>
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+        <p>Lovedeep Sidhu, Subhpreet Singh, Amandeep Singh</p>
+      </footer>
+    </div>
+  );
 }
-
-export default App
+ 
+export default App;
