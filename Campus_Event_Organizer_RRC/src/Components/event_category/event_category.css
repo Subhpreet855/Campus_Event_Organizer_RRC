@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+
+.event-categories {
+  padding: 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  background: #f3f7fb;
+  background: linear-gradient(145deg, #ffffff, #f5f7fa);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.event-categories h2 {
+  font-family: "Merriweather", serif;
+  font-optical-sizing: auto;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #2b2b2b;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.event-categories ul {
+  font-family: "Merriweather", serif;
+  font-optical-sizing: auto;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.event-categories li {
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 0.8rem;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+}
+
+.event-categories li:hover {
+  background-color: #f0f6ff;
+  transform: translateY(-2px);
+  border-left: 4px solid #1f2836;
+}
+
+.event-categories li::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #1f2836;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
