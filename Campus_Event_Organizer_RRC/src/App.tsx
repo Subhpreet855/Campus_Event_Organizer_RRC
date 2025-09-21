@@ -1,21 +1,22 @@
 import "./App.css";
-import Header from "./Components/header/header";
+import Header from "./Components/header/Header";
 import FeaturedEvent from "./Components/featured-event/FeaturedEvent";
 import EventList from "./Components/Event_List/EventList";
-import EventCategories from "./Components/event_category/event_category";
- 
+import EventCategories from "./Components/event_category/EventCategories";
+import Footer from "./Components/footer/Footer";
+
 function App() {
   return (
     <>
+      <Header />
       <main>
-        <Header />
         <FeaturedEvent />
         <EventList />
         <EventCategories />
-        <footer />
       </main>
+      <Footer />
     </>
   );
 }
- 
+
 export default App;
