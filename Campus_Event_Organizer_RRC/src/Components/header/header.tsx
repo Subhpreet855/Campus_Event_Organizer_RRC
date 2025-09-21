@@ -1,6 +1,6 @@
 import "../../Components/header/header.css";
-import rrcLogo from "../../assets/Red_River_College_Logo.png"; // make sure your logo is here
-import heroImage from "../../assets/Hero.jpg"; // background hero image
+import rrcLogo from "../../assets/Red_River_College_Logo.png"; 
+import heroImage from "../../assets/Hero.jpg"; 
 
 function Header() {
   return (
@@ -26,7 +26,6 @@ function Header() {
         </nav>
       </div>
 
-      {/* Hero Section */}
       <div
         className="header-hero"
         style={{ backgroundImage: `url(${heroImage})` }}
