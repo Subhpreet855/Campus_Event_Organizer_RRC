@@ -1,14 +1,20 @@
-
 import "./App.css";
-import FeaturedEvent from "./components/featured-event/FeaturedEvent";
-        
-function App() {
+import Header from "./Components/header/header";
+import FeaturedEvent from "./Components/featured-event/FeaturedEvent";
+import EventList from "./Components/Event_List/EventList";
+import EventCategories from "./Components/event_category/event_category";
+import Footer from "./Components/footer/footer";
 
+function App() {
   return (
     <>
-    <div >
+      <Header />
+      <main>
         <FeaturedEvent />
-    </div>
+        <EventList />
+        <EventCategories />
+      </main>
+      <Footer />
     </>
   );
 }
