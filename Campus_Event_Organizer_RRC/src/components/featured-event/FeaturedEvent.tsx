@@ -1,5 +1,5 @@
 import "./FeaturedEvent.css";
-import { featuredEvents } from "../../data/FeaturedEventData"; // Imported data from FeaturedEvent.tsx
+import { featuredEvents } from "../../data/FeaturedEventData";
 
 function FeaturedEvent() {
   return (

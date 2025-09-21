@@ -1,16 +1,21 @@
-
 import "./App.css";
-import FeaturedEvent from "./components/featured-event/FeaturedEvent";
-        
+import Header from "./Components/header/header";
+import FeaturedEvent from "./Components/featured-event/FeaturedEvent";
+import EventList from "./Components/Event_List/EventList";
+import EventCategories from "./Components/event_category/event_category";
+ 
 function App() {
-
   return (
     <>
-    <div >
+      <main>
+        <Header />
         <FeaturedEvent />
-    </div>
+        <EventList />
+        <EventCategories />
+        <footer />
+      </main>
     </>
   );
 }
-
+ 
 export default App;
