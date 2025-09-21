@@ -1,9 +1,9 @@
 import "./App.css";
-import Header from "./Components/header/Header";
+import Header from "./Components/header/header";
 import FeaturedEvent from "./Components/featured-event/FeaturedEvent";
 import EventList from "./Components/Event_List/EventList";
-import EventCategories from "./Components/event_category/EventCategories";
-import Footer from "./Components/footer/Footer";
+import EventCategories from "./Components/event_category/event_category";
+import Footer from "./Components/footer/footer";
 
 function App() {
   return (
