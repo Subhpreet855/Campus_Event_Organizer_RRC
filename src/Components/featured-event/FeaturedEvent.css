@@ -6,7 +6,54 @@
 .featured-event h2 {
   margin-bottom: 1rem;
   font-size: 1.5rem;
-  color: #ff0008; 
+  color: #ff0008;
+}
+
+.add-event-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem auto 2rem;
+  width: 90%;
+  max-width: 400px;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+.add-event-form h3 {
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+.add-event-form input,
+.add-event-form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.add-event-form textarea {
+  resize: none;
+  height: 60px;
+}
+
+.add-event-form button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #ff0008;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-event-form button:hover {
+  background-color: #cc0006;
 }
 
 .event-card {
@@ -23,7 +70,7 @@
 .event-card h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
-  color: #98bac1; 
+  color: #98bac1;
 }
 
 .event-info {
@@ -42,4 +89,18 @@
   font-size: 0.9rem;
   color: #444;
   margin: 0;
+}
+
+.remove-btn {
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  background-color: #98bac1;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: #7aa1a8;
 }
