@@ -1,8 +1,18 @@
-import { events } from "../../data/events"; // I imported data from Event.ts file
+import { useState } from "react";
+import { events } from "../../data/events";
 import "./EventList.css";
 
 function EventList() {
-  // this function is returning  a section with a className
+  const [name, setName] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !feedback.trim()) return;
+    setSubmitted(true);
+  }
+
   return (
     <section className="event-list">
       <h2>Upcoming Events</h2>
@@ -16,6 +26,48 @@ function EventList() {
           </li>
         ))}
       </ul>
+      <h3 style={{ marginTop: "1.5rem" }}>Share Your Feedback</h3>
+      <form onSubmit={handleSubmit} className="feedback-form">
+        <div className="input-box">
+          <label>Your Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setSubmitted(false);
+            }}
+            required
+          />
+        </div>
+
+        <div className="input-box">
+          <label>Your Feedback:</label>
+          <textarea
+            rows={3}
+            value={feedback}
+            onChange={(e) => {
+              setFeedback(e.target.value);
+              setSubmitted(false);
+            }}
+            required
+          ></textarea>
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+
+      {submitted && (
+        <div className="submitted-box">
+          <h4>Feedback Summary</h4>
+          <p>
+            <strong>Name:</strong> {name}
+          </p>
+          <p>
+            <strong>Feedback:</strong> {feedback}
+          </p>
+        </div>
+      )}
     </section>
   );
 }
