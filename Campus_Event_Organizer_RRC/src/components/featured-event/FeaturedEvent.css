@@ -1,29 +1,40 @@
 .featured-event {
   padding: 1rem;
   text-align: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
+
+  
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .featured-event h2 {
   margin-bottom: 1rem;
   font-size: 1.5rem;
-  color: #ff0008; 
+  color: #0b5fff;
+  grid-column: 1 / -1;
 }
 
 .event-card {
-  display: inline-block;
-  width: 280px;
-  margin: 0.5rem;
+  margin: 0;
   padding: 1rem;
-  border: 1px solid #cccccc;
+  border: 1px solid #e1e4ea;
   border-radius: 8px;
   background: #fff;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 360px;
 }
 
-.event-card h3 {
+.event-title {
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
-  color: #98bac1; 
+  color: #0b5fff;
 }
 
 .event-info {
@@ -42,4 +53,39 @@
   font-size: 0.9rem;
   color: #444;
   margin: 0;
+}
+
+.event-actions {
+  display: flex;
+  gap: .5rem;
+  margin-top: auto;
+}
+
+.event-actions button {
+  padding: .4rem .6rem;
+  border: 1px solid #cfd6e6;
+  background: #f6f8ff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.event-actions .danger {
+  background: #ffecec;
+  border-color: #ffcdcd;
+}
+
+.add-event-form {
+  max-width: 520px;
+  margin: 1rem auto;
+  display: grid;
+  gap: .6rem;
+  text-align: left;
+}
+
+.add-event-form input,
+.add-event-form textarea {
+  width: 100%;
+  padding: .5rem;
+  border: 1px solid #cfd6e6;
+  border-radius: 6px;
 }
