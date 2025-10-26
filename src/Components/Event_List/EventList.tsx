@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { events } from "../../data/EventList";
+import { useFilteredEvents } from "../../hooks/useFilteredEvents";
 import "./EventList.css";
 
 function EventList() {
+
+  // Using custom hook for search and filtering
+  const { filteredEvents, query, setQuery } = useFilteredEvents();
+
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -16,8 +20,18 @@ function EventList() {
   return (
     <section className="event-list">
       <h2>Upcoming Events</h2>
+
+      {/* Added Search bar for filtering events */}
+      <input
+        type="text"
+        placeholder="Search Events here..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="search-input"
+      />
+
       <ul>
-        {events.map((item) => (
+        {filteredEvents.map((item) => (
           <li key={item.id}>
             <h3>{item.title}</h3>
             <p>Date: {item.date}</p>
@@ -26,6 +40,7 @@ function EventList() {
           </li>
         ))}
       </ul>
+
       <h3 style={{ marginTop: "1.5rem" }}>Share Your Feedback</h3>
       <form onSubmit={handleSubmit} className="feedback-form">
         <div className="input-box">
