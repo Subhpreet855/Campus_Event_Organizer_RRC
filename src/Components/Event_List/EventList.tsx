@@ -19,7 +19,7 @@ function EventList() {
 
   return (
     <section className="event-list">
-      <h2>Upcoming Events</h2>
+      <h2>Event List</h2>
 
       {/* Added Search bar for filtering events */}
       <input
