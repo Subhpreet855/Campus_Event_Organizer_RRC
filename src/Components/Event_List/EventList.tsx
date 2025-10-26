@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { events } from "../../data/events";
+import { events } from "../../data/EventList";
 import "./EventList.css";
 
 function EventList() {

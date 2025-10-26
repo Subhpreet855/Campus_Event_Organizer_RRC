@@ -51,6 +51,22 @@
   font-weight: 500;
 }
 
+.search-input {
+  width: 80%;
+  max-width: 600px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin: 0 auto 1.2rem auto;
+  display: block;
+}
+
+.search-input:focus {
+  border-color: #d82d1a;
+  outline: none;
+}
+
 .feedback-form {
   margin-top: 1.5rem;
   display: flex;
@@ -70,7 +86,6 @@
 }
 
 .feedback-form input,
-
 .feedback-form textarea {
   padding: 0.5rem 0.7rem;
   border: 1px solid #ccc;
