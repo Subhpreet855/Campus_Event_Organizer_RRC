@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import NavBar from "./nav/nav";
+import NavBar from "./Nav/nav";
 import Footer from "../../footer/footer";
 
 export function Layout() {
@@ -9,7 +9,7 @@ export function Layout() {
       <main className="main-content">
         <Outlet />
       </main>
-      <Footer team={["Subhpreet Singh", "Amandeep Singh", "Lovedeep Singh Sidhu"]} />
+      <Footer  />
     </div>
   );
 }
