@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { events } from "../../data/mockdata"; 
-import type { Event } from "../../types/event";
+import { events } from "../../data/EventListMockData"; 
+import type { Event } from "../../types/EventList";
  
 export function useEventState() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
