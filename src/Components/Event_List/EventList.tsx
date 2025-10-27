@@ -1,15 +1,29 @@
-import { useState } from "react";
-import { useFilteredEvents } from "../../hooks/useFilteredEvents";
+import { useState, useEffect } from "react";
+import { useEventState } from "../hooks/useEventState";
 import "./EventList.css";
 
 function EventList() {
-
-  // Using custom hook for search and filtering
-  const { filteredEvents, query, setQuery } = useFilteredEvents();
-
+  const { allEvents, loading } = useEventState();
+  const [query, setQuery] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState(allEvents);
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setFilteredEvents(allEvents);
+    } else {
+      const lower = query.toLowerCase();
+      const filtered = allEvents.filter(
+        (event) =>
+          event.title.toLowerCase().includes(lower) ||
+          event.description.toLowerCase().includes(lower) ||
+          event.location.toLowerCase().includes(lower)
+      );
+      setFilteredEvents(filtered);
+    }
+  }, [query, allEvents]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -17,28 +31,35 @@ function EventList() {
     setSubmitted(true);
   }
 
+  if (loading) {
+    return <p>Loading events...</p>;
+  }
+
   return (
     <section className="event-list">
       <h2>Event List</h2>
 
-      {/* Added Search bar for filtering events */}
       <input
         type="text"
-        placeholder="Search Events here..."
+        placeholder="Search events here..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="search-input"
       />
 
       <ul>
-        {filteredEvents.map((item) => (
-          <li key={item.id}>
-            <h3>{item.title}</h3>
-            <p>Date: {item.date}</p>
-            <p>Location: {item.location}</p>
-            <p>Description: {item.description}</p>
-          </li>
-        ))}
+        {filteredEvents.length > 0 ? (
+          filteredEvents.map((item) => (
+            <li key={item.id}>
+              <h3>{item.title}</h3>
+              <p>Date: {item.date}</p>
+              <p>Location: {item.location}</p>
+              <p>Description: {item.description}</p>
+            </li>
+          ))
+        ) : (
+          <p>No events found for your search.</p>
+        )}
       </ul>
 
       <h3 style={{ marginTop: "1.5rem" }}>Share Your Feedback</h3>

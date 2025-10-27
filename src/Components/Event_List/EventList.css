@@ -1,10 +1,11 @@
 .event-list {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 2rem auto;
   padding: 1.5rem;
-  background-color: #f7f7f7;
+  background-color: #fafafa;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .event-list h2 {
@@ -14,6 +15,21 @@
   color: #d82d1a;
 }
 
+.search-input {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #d82d1a;
+}
+
 .event-list ul {
   list-style: none;
   margin: 0;
@@ -21,22 +37,22 @@
 }
 
 .event-list li {
-  background-color: #ffffff;
+  background-color: #fff;
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 8px;
-  border: 1px solid #200707;
+  border: 1px solid #ddd;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .event-list li:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 .event-list h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
   color: #222;
 }
 
@@ -46,27 +62,6 @@
   color: #555;
 }
 
-.event-list p:last-child {
-  color: #333;
-  font-weight: 500;
-}
-
-.search-input {
-  width: 80%;
-  max-width: 600px;
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin: 0 auto 1.2rem auto;
-  display: block;
-}
-
-.search-input:focus {
-  border-color: #d82d1a;
-  outline: none;
-}
-
 .feedback-form {
   margin-top: 1.5rem;
   display: flex;
@@ -74,20 +69,20 @@
   gap: 0.8rem;
 }
 
-.feedback-form .input-box {
+.input-box {
   display: flex;
   flex-direction: column;
 }
 
-.feedback-form label {
+.input-box label {
   font-weight: 600;
   color: #222;
   margin-bottom: 0.3rem;
 }
 
-.feedback-form input,
-.feedback-form textarea {
-  padding: 0.5rem 0.7rem;
+.input-box input,
+.input-box textarea {
+  padding: 0.6rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 0.95rem;
@@ -95,18 +90,18 @@
   transition: border-color 0.2s ease;
 }
 
-.feedback-form input:focus,
-.feedback-form textarea:focus {
+.input-box input:focus,
+.input-box textarea:focus {
   outline: none;
   border-color: #d82d1a;
 }
 
 .feedback-form button {
   background-color: #d82d1a;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 0.45rem 0.9rem;
+  padding: 0.6rem 1rem;
   font-size: 0.95rem;
   cursor: pointer;
   align-self: flex-start;
