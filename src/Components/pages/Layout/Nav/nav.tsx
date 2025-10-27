@@ -1,7 +1,5 @@
 import { NavLink } from "react-router-dom";
 import "./nav.css";
-import NotFound from "../../NotFound/NotFound";
-import FeaturedEvent from "../../../featured-event/FeaturedEvent";
 
 function NavBar() {
   return (

@@ -1,10 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createContext } from "react";
 import { Layout } from "./Components/pages/Layout/Layout";
 import Header from "./Components/header/header";
 import FeaturedEvent from "./Components/featured-event/FeaturedEvent";
 import EventList from "./Components/Event_List/EventList";
 import EventCategories from "./Components/event_category/event_category";
 import { NotFound } from "./Components/pages/NotFound/NotFound";
+import { useEventState } from "./Components/hooks/useEventState";
+
+export const SharedEventContext = createContext<any>(null);
 
 function HomePage() {
   return (
@@ -71,7 +75,13 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  const sharedEventState = useEventState();
+
+  return (
+    <SharedEventContext.Provider value={sharedEventState}>
+      <RouterProvider router={router} />
+    </SharedEventContext.Provider>
+  );
 }
 
 export default App;

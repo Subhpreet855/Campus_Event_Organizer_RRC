@@ -1,11 +1,4 @@
-// Generated mock data 
-export type Event = {
-  id: number;
-  title: string;
-  date: string;
-  location: string;
-  description: string;
-};
+import type { Event } from "../types/event";
 
 export const events: Event[] = [
   {
