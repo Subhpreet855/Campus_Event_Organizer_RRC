@@ -1,4 +1,3 @@
-
 import type { FeaturedEventData } from "../types/event";
 import { featuredEvents } from "../data/FeaturedEventData";
 
