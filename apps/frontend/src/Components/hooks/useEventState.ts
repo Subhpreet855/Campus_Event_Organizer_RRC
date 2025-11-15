@@ -1,23 +1,28 @@
 import { useState, useEffect } from "react";
-import { events } from "../../data/EventListMockData"; 
 import type { Event } from "../../types/EventList";
- 
+import { EventListService } from "../services/EventlistService";
+
 export function useEventState() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
- 
+
   useEffect(() => {
-    setAllEvents(events);
+    const data = EventListService.getAll();
+    setAllEvents(data);
     setLoading(false);
   }, []);
- 
+
   const addEvent = (newEvent: Event) => {
-    setAllEvents((prev) => [...prev, newEvent]);
+    EventListService.add(newEvent);
+    const updated = EventListService.getAll();
+    setAllEvents(updated);
   };
- 
+
   const removeEvent = (id: number) => {
-    setAllEvents((prev) => prev.filter((e) => e.id !== id));
+    EventListService.delete(id);
+    const updated = EventListService.getAll();
+    setAllEvents(updated);
   };
- 
+
   return { allEvents, loading, addEvent, removeEvent };
 }
