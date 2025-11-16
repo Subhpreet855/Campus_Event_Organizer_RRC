@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import * as eventController from "../controllers/eventListController.ts";
+import * as eventController from "../controllers/eventListController";
 import { validateRequest } from "../middleware/validateRequest";
 import { 
     postEventSchema, 
@@ -11,34 +11,34 @@ const router: Router = express.Router();
 
 // To GET all events
 router.get(
-    "/events",
+    "/eventsList",
     eventController.getAllEvents
 );
 
 // To GET event by ID
 router.get(
-    "/events/:id",
+    "/eventsList/:id",
     validateRequest(getEventByIdSchema),
     eventController.getEventById
 );
 
 // To CREATE new event
 router.post(
-    "/events",
+    "/eventsList",
     validateRequest(postEventSchema),
     eventController.createEvent
 );
 
 // To UPDATE existing event
 router.put(
-    "/events/:id",
+    "/eventsList/:id",
     validateRequest(postEventSchema),
     eventController.updateEvent
 );
 
 // To DETELE event
 router.delete(
-    "/events/:id",
+    "/eventsList/:id",
     validateRequest(deleteEventSchema),
     eventController.deleteEvent
 );
