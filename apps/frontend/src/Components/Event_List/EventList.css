@@ -1,0 +1,156 @@
+.event-list {
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fafafa;
+  border-radius: 12px;
+  font-family: Arial, sans-serif;
+}
+
+.event-list h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #d82d1a;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.event-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+
+.event-list li {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  transition: 0.2s ease;
+}
+
+.event-list li:hover {
+  transform: translateY(-2px);
+}
+
+.add-event-form {
+  width: 100%;
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.add-event-form h3 {
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.add-event-form input,
+.add-event-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.add-event-form textarea {
+  resize: none;
+}
+
+.add-event-form button {
+  background-color: #d82d1a;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  width: fit-content;
+  justify-self: center;
+}
+
+.add-event-form button:hover {
+  background-color: #b42213;
+}
+
+.delete-btn {
+  background-color: #d82d1a;
+  color: white;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.delete-btn:hover {
+  background-color: #b42213;
+}
+
+.feedback-form {
+  margin: 3rem auto;
+  max-width: 500px;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.18);
+  display: grid;
+  gap: 1rem;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  resize: none;
+}
+
+.feedback-form button {
+  background-color: #d82d1a;
+  color: white;
+  padding: 0.7rem 1.3rem;
+  border: none;
+  border-radius: 6px;
+  width: fit-content;
+  cursor: pointer;
+  justify-self: center;
+}
+
+.feedback-form button:hover {
+  background-color: #b42213;
+}
+
+.submitted-box {
+  margin: 1.5rem auto;
+  max-width: 500px;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+}
+
+.feedback-item hr {
+  border: none;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.15);
+  margin: 0.75rem 0;
+}
