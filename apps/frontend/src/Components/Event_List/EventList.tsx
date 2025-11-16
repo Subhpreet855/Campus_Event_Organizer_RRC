@@ -19,26 +19,27 @@ function EventList() {
   } = useEventForm();
 
   const [query, setQuery] = useState("");
-
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [feedbackList, setFeedbackList] = useState<{ name: string; text: string }[]>([]);
 
-  const filtered = allEvents.filter((e) => {
-    const q = query.toLowerCase();
+  const filtered = allEvents.filter((event) => {
+    const input = query.toLowerCase();
     return (
-      e.title.toLowerCase().includes(q) ||
-      e.location.toLowerCase().includes(q) ||
-      e.description.toLowerCase().includes(q)
+      event.title.toLowerCase().includes(input) ||
+      event.location.toLowerCase().includes(input) ||
+      event.description.toLowerCase().includes(input)
     );
   });
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !date.trim() || !location.trim()) return;
 
-    addEvent({
-      id: Date.now(),
+    if (!title.trim() || !date.trim() || !location.trim()) {
+      return;
+    }
+
+    await addEvent({
       title,
       date,
       location,
@@ -50,15 +51,19 @@ function EventList() {
 
   const handleFeedback = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !feedback.trim()) return;
+
+    if (!name.trim() || !feedback.trim()) {
+      return;
+    }
 
     setFeedbackList((prev) => [...prev, { name, text: feedback }]);
-
     setName("");
     setFeedback("");
   };
 
-  if (loading) return <p>Loading events...</p>;
+  if (loading) {
+    return <p>Loading events...</p>;
+  }
 
   return (
     <section className="event-list">
@@ -109,8 +114,8 @@ function EventList() {
 
       <ul>
         {filtered.length > 0 ? (
-          filtered.map((e) => (
-            <EventItem key={e.id} event={e} onRemove={removeEvent} />
+          filtered.map((event) => (
+            <EventItem key={event.id} event={event} onRemove={removeEvent} />
           ))
         ) : (
           <p>No events found.</p>
@@ -142,10 +147,10 @@ function EventList() {
         <div className="submitted-box">
           <h4>Feedback Summary</h4>
 
-          {feedbackList.map((f, idx) => (
+          {feedbackList.map((item, idx) => (
             <div key={idx} className="feedback-item">
-              <p><strong>Name:</strong> {f.name}</p>
-              <p><strong>Feedback:</strong> {f.text}</p>
+              <p><strong>Name:</strong> {item.name}</p>
+              <p><strong>Feedback:</strong> {item.text}</p>
               <hr />
             </div>
           ))}
