@@ -7,21 +7,49 @@ export function useEventState() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const data = EventListService.getAll();
-    setAllEvents(data);
-    setLoading(false);
+    const loadEvents = async () => {
+      const data = await EventListService.getAll();
+
+      const formatted = data.map(e => ({
+        ...e,
+        date: typeof e.date === "string"
+          ? e.date
+          : new Date(e.date).toISOString().split("T")[0]
+      }));
+
+      setAllEvents(formatted);
+      setLoading(false);
+    };
+
+    loadEvents();
   }, []);
 
-  const addEvent = (newEvent: Event) => {
-    EventListService.add(newEvent);
-    const updated = EventListService.getAll();
-    setAllEvents(updated);
+  const addEvent = async (newEvent: Event) => {
+    await EventListService.add(newEvent);
+    const updated = await EventListService.getAll();
+
+    const formatted = updated.map(e => ({
+      ...e,
+      date: typeof e.date === "string"
+        ? e.date
+        : new Date(e.date).toISOString().split("T")[0]
+    }));
+
+    setAllEvents(formatted);
   };
 
-  const removeEvent = (id: number) => {
-    EventListService.delete(id);
-    const updated = EventListService.getAll();
-    setAllEvents(updated);
+  const removeEvent = async (id: number) => {
+    await EventListService.delete(id);
+    const updated = await EventListService.getAll();
+
+    const formatted = updated.map(e => ({
+      ...e,
+      date: typeof e.date === "string"
+        ? e.date
+        : new Date(e.date).toISOString().split("T")[0]
+    }));
+
+    setAllEvents(formatted);
   };
 
   return { allEvents, loading, addEvent, removeEvent };
