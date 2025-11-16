@@ -17,7 +17,7 @@
   },
   "include": [
     "src/**/*",
-    "types",
+    "src/types",
     "global.d.ts"
   ],
   "exclude": [
