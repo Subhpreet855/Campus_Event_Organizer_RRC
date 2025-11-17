@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import corsOptions from "./config/cors";
 import eventListRoutes from "./api/v1/routes/eventListRoutes";
+import featuredEventRoutes from "./api/v1/routes/featuredEventRoutes";
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.get("/api/health", (_req, res) => {
 
 // API routes
 app.use("/api/v1", eventListRoutes);
+app.use("/api/v1/featured-events", featuredEventRoutes);
 
 export default app;
