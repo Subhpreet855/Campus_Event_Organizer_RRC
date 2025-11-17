@@ -5,21 +5,22 @@
  * Users can search, sort, add, and remove categories dynamically.
  *
  * Features:
- * - Displays a list of categories directly from repository (categoryRepository).
- * - Allows adding and removing categories.
+ * - Loads categories from the back-end via categoryRepository.
+ * - Allows adding and removing categories with persistence in the database.
  */
 
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./event_category.css";
 import { useListControls } from "../hooks/useListControls";
 import type { Event } from "../../types/event";
 import { SharedEventContext } from "../../App";
-import { categoryRepository } from "../../repositories/categoryRepository";
-import type { Category } from "../../data/mockdataCategories";
+import { categoryRepository, type Category } from "../../repositories/categoryRepository";
 
 function EventCategories() {
-  const [categories, setCategories] = useState<Category[]>(categoryRepository.getAll());
+  const [categories, setCategories] = useState<Category[]>([]);
   const [input, setInput] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const {
     searchValue,
@@ -32,7 +33,23 @@ function EventCategories() {
 
   const { allEvents, addEvent } = useContext(SharedEventContext);
 
-  const handleAddCategory = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryRepository.getAll();
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+        setLoadError("Failed to load categories");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleAddCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedInput = input.trim();
 
@@ -44,18 +61,22 @@ function EventCategories() {
     } as Partial<Event>);
 
     if (
-      isValid &&
-      !categories.some((c) => c.name.toLowerCase() === trimmedInput.toLowerCase())
+      !isValid ||
+      !trimmedInput ||
+      categories.some(
+        (c) => c.name.toLowerCase() === trimmedInput.toLowerCase()
+      )
     ) {
-      const newCategory: Category = {
-        id: categories.length + 1,
-        name: trimmedInput,
-        description: "User-added category",
-      };
+      return;
+    }
 
-      categoryRepository.add(newCategory);
-
-      setCategories(categoryRepository.getAll());
+    try {
+      const newCategory = await categoryRepository.add(
+        trimmedInput,
+        "User-added category"
+      );
+  
+      setCategories((prev) => [...prev, newCategory]);
       setInput("");
 
       addEvent({
@@ -65,16 +86,24 @@ function EventCategories() {
         location: "Main Campus",
         description: "Auto-generated event from category",
       });
+    } catch (error) {
+      console.error("Failed to add category", error);
     }
   };
 
-  const handleRemoveCategory = (id: number) => {
-    categoryRepository.delete(id);
-    setCategories(categoryRepository.getAll());
+  const handleRemoveCategory = async (id: number) => {
+    try {
+      await categoryRepository.delete(id);
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.error("Failed to delete category", error);
+    }
   };
 
   const filteredCategories = [...categories]
-    .filter((c) => c.name.toLowerCase().includes(searchValue.toLowerCase()))
+    .filter((c) =>
+      c.name.toLowerCase().includes(searchValue.toLowerCase())
+    )
     .sort((a, b) =>
       sortBy === "asc"
         ? a.name.localeCompare(b.name)
@@ -84,6 +113,9 @@ function EventCategories() {
   return (
     <section className="event-categories">
       <h2>Event Categories</h2>
+
+      {loading && <p>Loading categories...</p>}
+      {loadError && <p className="error">{loadError}</p>}
 
       <div className="controls">
         <input
