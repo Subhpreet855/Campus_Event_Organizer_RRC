@@ -3,6 +3,12 @@ import * as eventService from "../services/eventListService";
 import { successResponse } from "../models/responseModel";
 import { Event } from "@prisma/client";
 
+
+const formatEventDate = (event: Event) => ({
+    ...event,
+    date: new Date(event.date).toISOString().split("T")[0]
+});
+
 export const getAllEvents = async (
     _req: Request,
     res: Response,
@@ -10,8 +16,11 @@ export const getAllEvents = async (
 ): Promise<void> => {
     try {
         const events: Event[] = await eventService.fetchAllEvents();
+
+        const formatted = events.map(formatEventDate);
+
         res.status(200).json(
-            successResponse(events, "Events List retrieved successfully")
+            successResponse(formatted, "Event List retrieved successfully")
         );
     } catch (error) {
         next(error);
@@ -27,7 +36,9 @@ export const getEventById = async (
         const event = await eventService.getEventById(Number.parseInt(req.params.id));
 
         if (event) {
-            res.json(successResponse(event, "Event retrieved successfully"));
+            res.json(
+                successResponse(formatEventDate(event), "Event retrieved successfully")
+            );
         } else {
             throw new Error("Event not found");
         }
@@ -43,8 +54,10 @@ export const createEvent = async (
 ): Promise<void> => {
     try {
         const newEvent = await eventService.createEvent(req.body);
-        res.status(201)
-            .json(successResponse(newEvent, "Event created successfully"));
+
+        res.status(201).json(
+            successResponse(formatEventDate(newEvent), "Event created successfully")
+        );
     } catch (error) {
         next(error);
     }
@@ -60,8 +73,10 @@ export const updateEvent = async (
             Number.parseInt(req.params.id),
             req.body
         );
-        res.status(200)
-            .json(successResponse(updatedEvent, "Event updated successfully"));
+
+        res.status(200).json(
+            successResponse(formatEventDate(updatedEvent), "Event updated successfully")
+        );
     } catch (error) {
         next(error);
     }
@@ -74,8 +89,9 @@ export const deleteEvent = async (
 ): Promise<void> => {
     try {
         await eventService.deleteEvent(Number.parseInt(req.params.id));
-        res.status(200)
-            .json(successResponse(null, "Event deleted successfully"));
+        res.status(200).json(
+            successResponse(null, "Event deleted successfully")
+        );
     } catch (error) {
         next(error);
     }
