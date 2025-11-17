@@ -3,22 +3,47 @@ import { featuredEventRepository } from "../../repositories/featuredeventreposit
 
 export const featuredEventService = {
   async listAll(): Promise<FeaturedEventData[]> {
-    return featuredEventRepository.getAll();
+    try {
+      return await featuredEventRepository.getAll();
+    } catch (err) {
+      console.error("Service Error: Failed to fetch featured events:", err);
+      return [];
+    }
   },
 
   async getById(id: string) {
-    return featuredEventRepository.getById(id);
+    try {
+      return await featuredEventRepository.getById(id);
+    } catch (err) {
+      console.error(`Service Error: Failed to fetch event ${id}:`, err);
+      return null;
+    }
   },
 
   async add(event: Omit<FeaturedEventData, "id">) {
-    return featuredEventRepository.create(event);
+    try {
+      return await featuredEventRepository.create(event);
+    } catch (err) {
+      console.error("Service Error: Failed to create event:", err);
+      throw err;
+    }
   },
 
   async update(id: string, changes: Partial<Omit<FeaturedEventData, "id">>) {
-    return featuredEventRepository.update(id, changes);
+    try {
+      return await featuredEventRepository.update(id, changes);
+    } catch (err) {
+      console.error(`Service Error: Failed to update event ${id}:`, err);
+      throw err;
+    }
   },
 
   async remove(id: string) {
-    return featuredEventRepository.remove(id);
+    try {
+      return await featuredEventRepository.remove(id);
+    } catch (err) {
+      console.error(`Service Error: Failed to delete event ${id}:`, err);
+      return false;
+    }
   },
 };

@@ -1,40 +1,64 @@
 import type { FeaturedEventData } from "../types/event";
-import { featuredEvents } from "../data/FeaturedEventData";
 
-
-let data: FeaturedEventData[] = [...featuredEvents];
-const makeId = () => `Event-${Date.now()}`;
+const API_URL = "http://localhost:3000/api/v1/featured-events";
 
 export const featuredEventRepository = {
-
   async create(event: Omit<FeaturedEventData, "id">): Promise<FeaturedEventData> {
-    const newEvent: FeaturedEventData = { ...event, id: makeId() };
-    data.push(newEvent);
-    return newEvent;
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(event),
+    });
+
+    if (!res.ok) throw new Error("Failed to create Featured Event");
+    return res.json();
   },
 
   async getAll(): Promise<FeaturedEventData[]> {
-    return [...data];
+    const res = await fetch(API_URL);
+
+    if (!res.ok) {
+      console.error("Failed to fetch Featured Events");
+      return [];
+    }
+
+    return res.json();
   },
 
   async getById(id: string): Promise<FeaturedEventData | undefined> {
-    return data.find(e => e.id === id);
+    const res = await fetch(`${API_URL}/${id}`);
+
+    if (!res.ok) {
+      console.warn(`Event not found with id ${id}`);
+      return undefined;
+    }
+
+    return res.json();
   },
 
   async update(
     id: string,
     changes: Partial<Omit<FeaturedEventData, "id">>
   ): Promise<FeaturedEventData | undefined> {
-    const idx = data.findIndex(e => e.id === id);
-    if (idx === -1) return undefined;
-    const updated = { ...data[idx], ...changes };
-    data[idx] = updated;
-    return updated;
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(changes),
+    });
+
+    if (!res.ok) {
+      console.error("Failed to update Featured Event");
+      return undefined;
+    }
+
+    return res.json();
   },
 
   async remove(id: string): Promise<boolean> {
-    const before = data.length;
-    data = data.filter(e => e.id !== id);
-    return data.length < before;
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+    });
+
+    return res.ok; 
   },
 };
