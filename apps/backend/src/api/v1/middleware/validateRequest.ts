@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ObjectSchema } from "joi";
+import { ObjectSchema, ValidationErrorItem } from "joi";
 
 import { MiddlewareFunction, RequestData } from "../../../types/express";
 
@@ -8,7 +8,9 @@ export const validate = <T>(schema: ObjectSchema<T>, data: T): void => {
 
   if (error) {
     throw new Error(
-      `Validation error: ${error.details.map((x) => x.message).join(", ")}`
+      `Validation error: ${error.details
+        .map((x: ValidationErrorItem) => x.message)
+        .join(", ")}`
     );
   }
 };
@@ -20,7 +22,7 @@ export const validateRequest = (
     const data: RequestData = {
       ...req.body,
       ...req.params,
-      ...req.query
+      ...req.query,
     };
 
     try {
