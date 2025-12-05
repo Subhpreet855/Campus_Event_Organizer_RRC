@@ -1,9 +1,9 @@
-const BASE_URL = "http://localhost:3000/api/v1/eventslist";
+const API_URL = import.meta.env.NEXT_PUBLIC_API_URL;
 
 export const eventListRepository = {
   async getAll() {
     try {
-      const response = await fetch(BASE_URL);
+      const response = await fetch(`${API_URL}/eventsList`);
       const result = await response.json();
       return result.data ?? [];
     } catch (error) {
@@ -14,7 +14,7 @@ export const eventListRepository = {
 
   async add(newEvent: { title: string; date: string; location: string; description: string }) {
     try {
-      await fetch(BASE_URL, {
+      await fetch(`${API_URL}/eventsList`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newEvent)
@@ -26,7 +26,9 @@ export const eventListRepository = {
 
   async delete(id: number) {
     try {
-      await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/eventsList/${id}`, {
+        method: "DELETE"
+      });
     } catch (error) {
       console.error("Failed to delete event:", error);
     }
