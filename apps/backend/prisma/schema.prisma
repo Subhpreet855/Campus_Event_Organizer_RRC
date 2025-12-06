@@ -12,6 +12,16 @@ model Category {
   name        String
   description String
   events      Event[]
+  userCategoryPreferences UserCategoryPreference[]
+}
+
+model UserCategoryPreference {
+  id          Int      @id @default(autoincrement())
+  clerkUserId String
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([clerkUserId, categoryId])
 }
 
 model Event {
