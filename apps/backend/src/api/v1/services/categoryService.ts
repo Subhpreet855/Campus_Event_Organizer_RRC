@@ -56,7 +56,7 @@ export const updateCategory = async (
     const existingCategory = await prisma.category.findFirst({
       where: {
         name: data.name,
-        NOT: { id }, 
+        NOT: { id },
       },
     });
 
@@ -80,4 +80,20 @@ export const deleteCategory = async (id: number): Promise<void> => {
   await prisma.category.delete({
     where: { id },
   });
+};
+
+const userCategoryPreferences: Record<string, number[]> = {};
+
+export const getUserCategoryPreferences = async (
+  clerkUserId: string
+): Promise<number[]> => {
+  return userCategoryPreferences[clerkUserId] ?? [];
+};
+
+export const updateUserCategoryPreferences = async (
+  clerkUserId: string,
+  categories: number[]
+): Promise<number[]> => {
+  userCategoryPreferences[clerkUserId] = categories;
+  return categories;
 };
