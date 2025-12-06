@@ -4,18 +4,17 @@ import { eventListRepository } from "../../repositories/eventListRepository";
 export const EventListService = {
 
   async getAll(): Promise<Event[]> {
-    const events = await eventListRepository.getAll();
-    return events;
+    return await eventListRepository.getAll();
   },
 
   async add(newEvent: Omit<Event, "id">): Promise<void> {
     const payload = {
       ...newEvent,
-      date: typeof newEvent.date === "string"
-        ? newEvent.date
-        : newEvent.date.toISOString().split("T")[0],
+      date:
+        typeof newEvent.date === "string"
+          ? newEvent.date
+          : newEvent.date.toISOString().split("T")[0],
     };
-
     await eventListRepository.add(payload);
   },
 
@@ -34,4 +33,18 @@ export const EventListService = {
     const today = new Date();
     return all.filter((e) => new Date(e.date) >= today);
   },
+
+  async getMyEvents(token: string): Promise<Event[]> {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/eventsList/user`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const result = await response.json();
+    return result.data ?? [];
+  }
 };

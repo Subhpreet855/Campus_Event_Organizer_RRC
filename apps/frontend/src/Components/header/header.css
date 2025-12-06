@@ -162,3 +162,17 @@
     font-size: 0.9rem;
   }
 }
+
+.auth-bar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 20px;
+  background: #003366;
+}
+.auth-bar button {
+  background: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
