@@ -2,9 +2,22 @@ import "../../Components/header/header.css";
 import rrcLogo from "../../assets/Red_River_College_Logo.png";
 import heroImage from "../../assets/Hero.jpg";
 
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/clerk-react";
+
 function Header() {
   return (
     <header className="header-container">
+
+      {/* Top Auth Bar */}
+      <div className="auth-bar">
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </div>
+
       {/* Title Section */}
       <div className="logo-title">
         <img src={rrcLogo} alt="RRC Logo" className="rrc-logo" />

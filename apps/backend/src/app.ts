@@ -2,17 +2,19 @@ import express from "express";
 import cors from "cors";
 import corsOptions from "./config/cors";
 import { clerkMiddleware } from "@clerk/express";
+
 import eventListRoutes from "./api/v1/routes/eventListRoutes";
 import featuredEventRoutes from "./api/v1/routes/featuredEventRoutes";
 import categoryRoutes from "./api/v1/routes/categoryRoutes";
 
 const app = express();
 
+// middleware
+app.use(clerkMiddleware());
+
+// cors
 app.use(express.json());
 app.use(cors(corsOptions));
-
-// Clerk middleware
-app.use(clerkMiddleware());
 
 // Health check
 app.get("/api/health", (_req, res) => {
