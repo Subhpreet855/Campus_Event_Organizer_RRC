@@ -1,27 +1,26 @@
 import type { Event } from "../../types/EventList";
-
-const API_URL = "http://localhost:3000/api/v1/eventslist";
+import { eventListRepository } from "../../repositories/eventListRepository";
 
 export const EventListService = {
 
   async getAll(): Promise<Event[]> {
-    const response = await fetch(API_URL);
-    const result = await response.json();
-    return result.data;
+    const events = await eventListRepository.getAll();
+    return events;
   },
 
   async add(newEvent: Omit<Event, "id">): Promise<void> {
-    await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newEvent),
-    });
+    const payload = {
+      ...newEvent,
+      date: typeof newEvent.date === "string"
+        ? newEvent.date
+        : newEvent.date.toISOString().split("T")[0],
+    };
+
+    await eventListRepository.add(payload);
   },
 
   async delete(id: number): Promise<void> {
-    await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
-    });
+    await eventListRepository.delete(id);
   },
 
   sortByDate(events: Event[]): Event[] {
