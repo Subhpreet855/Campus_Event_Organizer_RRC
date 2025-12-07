@@ -1,9 +1,6 @@
 import "dotenv/config";
 import app from "./app";
 import { Server } from "http";
-import { clerkMiddleware } from "@clerk/express";
-
-app.use(clerkMiddleware());
 
 const PORT = process.env.PORT || 3000;
 

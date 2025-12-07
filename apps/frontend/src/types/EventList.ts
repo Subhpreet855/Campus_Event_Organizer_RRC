@@ -1,7 +1,9 @@
 export interface Event {
-  id?: number;
+  id: number;
   title: string;
-  date: string | Date;
+  date: string;
   location: string;
   description: string;
+
+  createdBy?: string | null;
 }

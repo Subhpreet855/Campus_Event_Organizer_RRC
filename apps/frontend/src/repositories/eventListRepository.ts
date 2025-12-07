@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.NEXT_PUBLIC_API_URL;
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const eventListRepository = {
   async getAll() {
@@ -12,11 +12,17 @@ export const eventListRepository = {
     }
   },
 
-  async add(newEvent: { title: string; date: string; location: string; description: string }) {
+  async add(
+    newEvent: { title: string; date: string; location: string; description: string },
+    token: string | null
+  ) {
     try {
       await fetch(`${API_URL}/eventsList`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : ""
+        },
         body: JSON.stringify(newEvent)
       });
     } catch (error) {
@@ -24,10 +30,13 @@ export const eventListRepository = {
     }
   },
 
-  async delete(id: number) {
+  async delete(id: number, token: string | null) {
     try {
       await fetch(`${API_URL}/eventsList/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : ""
+        }
       });
     } catch (error) {
       console.error("Failed to delete event:", error);

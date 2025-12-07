@@ -1,35 +1,23 @@
 import { Request, Response, NextFunction } from "express";
-import { ObjectSchema, ValidationErrorItem } from "joi";
+import { ObjectSchema } from "joi";
 
-import { MiddlewareFunction, RequestData } from "../../../types/express";
+export const validateRequest = (schema: ObjectSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
 
-export const validate = <T>(schema: ObjectSchema<T>, data: T): void => {
-  const { error } = schema.validate(data, { abortEarly: false });
+    const data =
+      req.method === "POST" || req.method === "PUT"
+        ? req.body
+        : req.params;
 
-  if (error) {
-    throw new Error(
-      `Validation error: ${error.details
-        .map((x: ValidationErrorItem) => x.message)
-        .join(", ")}`
-    );
-  }
-};
+    const { error } = schema.validate(data, { abortEarly: false });
 
-export const validateRequest = (
-  schema: ObjectSchema<RequestData>
-): MiddlewareFunction => {
-  return (req: Request, _res: Response, next: NextFunction) => {
-    const data: RequestData = {
-      ...req.body,
-      ...req.params,
-      ...req.query,
-    };
-
-    try {
-      validate(schema, data);
-      next();
-    } catch (error) {
-      next(error as Error);
+    if (error) {
+      return res.status(400).json({
+        status: "error",
+        message: error.details.map((d) => d.message).join(", "),
+      });
     }
+
+    next();
   };
 };
