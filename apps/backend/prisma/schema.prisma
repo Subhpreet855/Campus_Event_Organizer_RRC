@@ -7,13 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// USER MODEL
+model User {
+  id          Int      @id @default(autoincrement())
+  clerkUserId String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  events      Event[]
+}
+
+// CATEGORY MODEL
 model Category {
   id          Int      @id @default(autoincrement())
   name        String
   description String
   events      Event[]
+  userCategoryPreferences UserCategoryPreference[]
 }
 
+model UserCategoryPreference {
+  id          Int      @id @default(autoincrement())
+  clerkUserId String
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([clerkUserId, categoryId])
+}
+
+// EVENT MODEL
 model Event {
   id          Int       @id @default(autoincrement())
   title       String
@@ -24,10 +46,15 @@ model Event {
   categoryId  Int?
   category    Category? @relation(fields: [categoryId], references: [id])
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  // FIX: Clerk user IDs are strings, not numbers
+  userId      String?
+  user        User? @relation(fields: [userId], references: [clerkUserId])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
+// FEATURED EVENT MODEL
 model FeaturedEvent {
   id          Int      @id @default(autoincrement())
   name        String

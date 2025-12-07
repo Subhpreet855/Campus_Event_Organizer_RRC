@@ -1,98 +1,171 @@
 import { Request, Response, NextFunction } from "express";
 import * as eventService from "../services/eventListService";
 import { successResponse } from "../models/responseModel";
-import { Event } from "@prisma/client";
+import { clerkClient } from "@clerk/express";
 
-
-const formatEventDate = (event: Event) => ({
-    ...event,
-    date: new Date(event.date).toISOString().split("T")[0]
+const formatDate = (event: any) => ({
+  ...event,
+  date: new Date(event.date).toISOString().split("T")[0]
 });
 
-export const getAllEvents = async (
-    _req: Request,
-    res: Response,
-    next: NextFunction
-): Promise<void> => {
-    try {
-        const events: Event[] = await eventService.fetchAllEvents();
+const getUserEmail = async (clerkUserId: string | null) => {
+  if (!clerkUserId) return null;
 
-        const formatted = events.map(formatEventDate);
-
-        res.status(200).json(
-            successResponse(formatted, "Event List retrieved successfully")
-        );
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const user = await clerkClient.users.getUser(clerkUserId);
+    return user.emailAddresses[0]?.emailAddress || null;
+  } catch {
+    return null;
+  }
 };
 
-export const getEventById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-): Promise<void> => {
-    try {
-        const event = await eventService.getEventById(Number.parseInt(req.params.id));
+export const getAllEvents = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const events = await eventService.fetchAllEvents();
 
-        if (event) {
-            res.json(
-                successResponse(formatEventDate(event), "Event retrieved successfully")
-            );
-        } else {
-            throw new Error("Event not found");
-        }
-    } catch (error) {
-        next(error);
-    }
+    const withEmail = await Promise.all(
+      events.map(async (e) => {
+        const email = await getUserEmail(e.user?.clerkUserId ?? null);
+        return {
+          ...e,
+          createdBy: email ?? null
+        };
+      })
+    );
+
+    res.status(200).json(
+      successResponse(
+        withEmail.map(formatDate),
+        "Event list retrieved successfully"
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const createEvent = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-): Promise<void> => {
-    try {
-        const newEvent = await eventService.createEvent(req.body);
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const currentUser = (req as any).currentUser;
 
-        res.status(201).json(
-            successResponse(formatEventDate(newEvent), "Event created successfully")
-        );
-    } catch (error) {
-        next(error);
+    if (!currentUser) {
+      return res.status(401).json({
+        message: "You must be logged in to add an event."
+      });
     }
+
+    const newEvent = await eventService.createEvent({
+      ...req.body,
+      userId: currentUser.id
+    });
+
+    const email = await getUserEmail(currentUser.id);
+
+    const responseEvent = {
+      ...formatDate(newEvent),
+      createdBy: email ?? null
+    };
+
+    res.status(201).json(
+      successResponse(responseEvent, "Event created successfully")
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getEventById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const event = await eventService.getEventById(Number(req.params.id));
+
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    const email = await getUserEmail(event.user?.clerkUserId ?? null);
+
+    const formatted = {
+      ...formatDate(event),
+      createdBy: email ?? null
+    };
+
+    res.json(successResponse(formatted, "Event retrieved successfully"));
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updateEvent = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-): Promise<void> => {
-    try {
-        const updatedEvent = await eventService.updateEvent(
-            Number.parseInt(req.params.id),
-            req.body
-        );
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const updated = await eventService.updateEvent(
+      Number(req.params.id),
+      req.body
+    );
 
-        res.status(200).json(
-            successResponse(formatEventDate(updatedEvent), "Event updated successfully")
-        );
-    } catch (error) {
-        next(error);
-    }
+    res.status(200).json(
+      successResponse(formatDate(updated), "Event updated successfully")
+    );
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteEvent = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-): Promise<void> => {
-    try {
-        await eventService.deleteEvent(Number.parseInt(req.params.id));
-        res.status(200).json(
-            successResponse(null, "Event deleted successfully")
-        );
-    } catch (error) {
-        next(error);
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await eventService.deleteEvent(Number(req.params.id));
+
+    res
+      .status(200)
+      .json(successResponse(null, "Event deleted successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyEvents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const currentUser = (req as any).currentUser;
+
+    if (!currentUser) {
+      throw new Error("Not authenticated");
     }
+
+    const events = await eventService.getEventsByUser(currentUser.id);
+    const email = await getUserEmail(currentUser.id);
+
+    const formatted = events.map((e) => ({
+      ...formatDate(e),
+      createdBy: email ?? null
+    }));
+
+    res.status(200).json(
+      successResponse(formatted, "User events retrieved successfully")
+    );
+  } catch (error) {
+    next(error);
+  }
 };

@@ -1,69 +1,46 @@
 import { useState } from "react";
 import { useEventState } from "../hooks/useEventState";
 import { useEventForm } from "../hooks/useEventForm";
+import { useUser } from "@clerk/clerk-react";
 import EventItem from "./EventItem";
 import "./EventList.css";
 
 function EventList() {
+  const { user } = useUser();
   const { allEvents, loading, addEvent, removeEvent } = useEventState();
+
   const {
-    title,
-    date,
-    location,
-    description,
-    setTitle,
-    setDate,
-    setLocation,
-    setDescription,
-    resetForm,
+    title, date, location, description,
+    setTitle, setDate, setLocation, setDescription,
+    resetForm
   } = useEventForm();
 
   const [query, setQuery] = useState("");
-  const [name, setName] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [feedbackList, setFeedbackList] = useState<{ name: string; text: string }[]>([]);
 
-  const filtered = allEvents.filter((event) => {
-    const input = query.toLowerCase();
-    return (
-      event.title.toLowerCase().includes(input) ||
-      event.location.toLowerCase().includes(input) ||
-      event.description.toLowerCase().includes(input)
-    );
-  });
+  const filtered = allEvents.filter(e =>
+    e.title.toLowerCase().includes(query.toLowerCase())
+  );
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim() || !date.trim() || !location.trim()) {
+    if (!user) {
+      alert("Please log in to add an event.");
       return;
     }
 
-    await addEvent({
+    const newEvent = {
       title,
       date,
       location,
-      description,
-    });
+      description
+    };
 
+    await addEvent(newEvent);
     resetForm();
   };
 
-  const handleFeedback = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!name.trim() || !feedback.trim()) {
-      return;
-    }
-
-    setFeedbackList((prev) => [...prev, { name, text: feedback }]);
-    setName("");
-    setFeedback("");
-  };
-
-  if (loading) {
-    return <p>Loading events...</p>;
-  }
+  if (loading) return <p>Loading events...</p>;
 
   return (
     <section className="event-list">
@@ -79,6 +56,12 @@ function EventList() {
 
       <form onSubmit={handleAdd} className="add-event-form">
         <h3>Add a New Event</h3>
+
+        {!user && (
+          <p className="login-warning">
+            Please log in to add an event.
+          </p>
+        )}
 
         <input
           type="text"
@@ -109,53 +92,21 @@ function EventList() {
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <button type="submit">Add Event</button>
+        {}
+        <button type="submit">
+          Add Event
+        </button>
       </form>
 
       <ul>
         {filtered.length > 0 ? (
-          filtered.map((event) => (
+          filtered.map(event => (
             <EventItem key={event.id} event={event} onRemove={removeEvent} />
           ))
         ) : (
           <p>No events found.</p>
         )}
       </ul>
-
-      <h3>Share Your Feedback</h3>
-
-      <form onSubmit={handleFeedback} className="feedback-form">
-        <input
-          type="text"
-          placeholder="Your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-
-        <textarea
-          placeholder="Your feedback"
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-          required
-        />
-
-        <button type="submit">Submit</button>
-      </form>
-
-      {feedbackList.length > 0 && (
-        <div className="submitted-box">
-          <h4>Feedback Summary</h4>
-
-          {feedbackList.map((item, idx) => (
-            <div key={idx} className="feedback-item">
-              <p><strong>Name:</strong> {item.name}</p>
-              <p><strong>Feedback:</strong> {item.text}</p>
-              <hr />
-            </div>
-          ))}
-        </div>
-      )}
     </section>
   );
 }

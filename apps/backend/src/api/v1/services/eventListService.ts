@@ -1,68 +1,94 @@
-import { Event } from "@prisma/client";
 import prisma from "../../../prismaClient";
 
-export const fetchAllEvents = async (): Promise<Event[]> => {
-    return prisma.event.findMany();
+// Fetch all events and include user data
+export const fetchAllEvents = async () => {
+  return prisma.event.findMany({
+    include: { user: true },
+    orderBy: { createdAt: "desc" }
+  });
 };
 
-export const getEventById = async (id: number): Promise<Event | null> => {
-    const event = await prisma.event.findUnique({
-        where: {
-            id: id
-        }
-    });
-
-    if (!event) {
-        return null;
-    } else {
-        return event;
-    }
+// Get event by ID
+export const getEventById = async (id: number) => {
+  return prisma.event.findUnique({
+    where: { id },
+    include: { user: true }
+  });
 };
 
+// Create a new event
 export const createEvent = async (eventData: {
+  title: string;
+  description: string;
+  date: Date | string;
+  location: string;
+  categoryId?: number | null;
+  userId?: string | null;
+}) => {
+  const data: any = {
+    title: eventData.title,
+    description: eventData.description,
+    location: eventData.location,
+    date: new Date(eventData.date)
+  };
+
+  // Optional category
+  if (eventData.categoryId !== undefined && eventData.categoryId !== null) {
+    data.categoryId = eventData.categoryId;
+  }
+
+  // Clerk userId is a string
+  if (eventData.userId) {
+    data.userId = eventData.userId;
+  }
+
+  return prisma.event.create({ data });
+};
+
+// Update event
+export const updateEvent = async (
+  id: number,
+  eventData: {
     title: string;
     description: string;
     date: Date | string;
     location: string;
-    categoryId?: number;
-}): Promise<Event> => {
-    const newEvent: Event = await prisma.event.create({
-        data: {
-            ...eventData,
-            date: new Date(eventData.date)
-        }
-    });
+    categoryId?: number | null;
+  }
+) => {
+  const data: any = {
+    title: eventData.title,
+    description: eventData.description,
+    location: eventData.location,
+    date: new Date(eventData.date)
+  };
 
-    return newEvent;
+  if (eventData.categoryId !== undefined && eventData.categoryId !== null) {
+    data.categoryId = eventData.categoryId;
+  }
+
+  return prisma.event.update({
+    where: { id },
+    data
+  });
 };
 
-export const updateEvent = async (
-    id: number,
-    eventData: {
-        title: string;
-        description: string;
-        date: Date | string;
-        location: string;
-        categoryId?: number;
-    }
-): Promise<Event> => {
-    const updatedEvent = await prisma.event.update({
-        where: {
-            id: id
-        },
-        data: {
-            ...eventData,
-            date: new Date(eventData.date)
-        }
-    });
-
-    return updatedEvent;
+// Delete event
+export const deleteEvent = async (id: number) => {
+  return prisma.event.delete({
+    where: { id }
+  });
 };
 
-export const deleteEvent = async (id: number): Promise<void> => {
-    await prisma.event.delete({
-        where: {
-            id: id
-        }
-    });
+// Get all events created by a user
+export const getEventsByUser = async (clerkUserId: string) => {
+  return prisma.event.findMany({
+    where: {
+      userId: {
+        equals: clerkUserId
+      }
+    },
+    include: { user: true },
+    orderBy: { createdAt: "desc" }
+  });
 };

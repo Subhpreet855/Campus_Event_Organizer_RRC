@@ -12,12 +12,6 @@
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "concurrently": "^9.1.2",
-    "typescript": "^5.8.2"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "joi": "^18.0.1"
+    "concurrently": "^9.1.2"
   }
 }

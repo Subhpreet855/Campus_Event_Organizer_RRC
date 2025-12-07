@@ -14,13 +14,26 @@ import "./event_category.css";
 import { useListControls } from "../hooks/useListControls";
 import type { Event } from "../../types/event";
 import { SharedEventContext } from "../../App";
-import { categoryRepository, type Category } from "../../repositories/categoryRepository";
+import {
+  categoryRepository,
+  type Category,
+} from "../../repositories/categoryRepository";
+import { useUser, useAuth } from "@clerk/clerk-react";
 
 function EventCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [input, setInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // NEW: user-specific preferences state
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
+  const [loadingPrefs, setLoadingPrefs] = useState<boolean>(false);
+  const [savingPrefs, setSavingPrefs] = useState<boolean>(false);
+  const [prefsError, setPrefsError] = useState<string | null>(null);
+
+  const { isSignedIn } = useUser();
+  const { getToken } = useAuth();
 
   const {
     searchValue,
@@ -49,6 +62,34 @@ function EventCategories() {
     fetchCategories();
   }, []);
 
+  // NEW: load logged-in user's saved category preferences
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      if (!isSignedIn) {
+        setSelectedCategoryIds([]);
+        return;
+      }
+
+      try {
+        setLoadingPrefs(true);
+        setPrefsError(null);
+
+        const token = await getToken();
+        if (!token) throw new Error("No token");
+
+        const prefs = await categoryRepository.getUserPreferences(token);
+        setSelectedCategoryIds(prefs);
+      } catch (error) {
+        console.error(error);
+        setPrefsError("Failed to load your saved category preferences");
+      } finally {
+        setLoadingPrefs(false);
+      }
+    };
+
+    fetchPreferences();
+  }, [isSignedIn, getToken]);
+
   const handleAddCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedInput = input.trim();
@@ -75,7 +116,7 @@ function EventCategories() {
         trimmedInput,
         "User-added category"
       );
-  
+
       setCategories((prev) => [...prev, newCategory]);
       setInput("");
 
@@ -95,8 +136,40 @@ function EventCategories() {
     try {
       await categoryRepository.delete(id);
       setCategories((prev) => prev.filter((c) => c.id !== id));
+      // Also remove from preferences if present
+      setSelectedCategoryIds((prev) => prev.filter((x) => x !== id));
     } catch (error) {
       console.error("Failed to delete category", error);
+    }
+  };
+
+  // NEW: toggle preference for a category ID
+  const toggleCategoryPreference = (id: number) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  // NEW: save preferences to backend with Clerk token
+  const handleSavePreferences = async () => {
+    if (!isSignedIn) return;
+
+    try {
+      setSavingPrefs(true);
+      setPrefsError(null);
+
+      const token = await getToken();
+      if (!token) throw new Error("No token");
+
+      await categoryRepository.updateUserPreferences(
+        selectedCategoryIds,
+        token
+      );
+    } catch (error) {
+      console.error(error);
+      setPrefsError("Failed to save your category preferences");
+    } finally {
+      setSavingPrefs(false);
     }
   };
 
@@ -115,7 +188,9 @@ function EventCategories() {
       <h2>Event Categories</h2>
 
       {loading && <p>Loading categories...</p>}
+      {loadingPrefs && isSignedIn && <p>Loading your saved preferences...</p>}
       {loadError && <p className="error">{loadError}</p>}
+      {prefsError && <p className="error">{prefsError}</p>}
 
       <div className="controls">
         <input
@@ -150,7 +225,16 @@ function EventCategories() {
         {filteredCategories.map((category) => (
           <li key={category.id} className="category-item">
             <div>
-              <strong>{category.name}</strong>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedCategoryIds.includes(category.id)}
+                  disabled={!isSignedIn}
+                  onChange={() => toggleCategoryPreference(category.id)}
+                  style={{ marginRight: "0.5rem" }}
+                />
+                <strong>{category.name}</strong>
+              </label>
             </div>
             <button
               type="button"
@@ -162,6 +246,23 @@ function EventCategories() {
           </li>
         ))}
       </ul>
+
+      {!isSignedIn && (
+        <p className="hint">
+          Log in to save your favourite categories to your account.
+        </p>
+      )}
+
+      {isSignedIn && (
+        <button
+          type="button"
+          onClick={handleSavePreferences}
+          disabled={savingPrefs}
+          className="save-preferences-btn"
+        >
+          {savingPrefs ? "Saving..." : "Save My Category Preferences"}
+        </button>
+      )}
     </section>
   );
 }
