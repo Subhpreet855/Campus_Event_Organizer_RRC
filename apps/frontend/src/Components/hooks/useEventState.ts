@@ -1,55 +1,47 @@
 import { useState, useEffect } from "react";
 import type { Event } from "../../types/EventList";
 import { EventListService } from "../services/EventlistService";
+import { useAuth } from "@clerk/clerk-react";
 
 export function useEventState() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadEvents = async () => {
-      const data = await EventListService.getAll();
+  const { getToken } = useAuth();
 
-      const formatted = data.map(e => ({
-        ...e,
-        date: typeof e.date === "string"
+  const formatEvents = (events: Event[]) =>
+    events.map((e) => ({
+      ...e,
+      date:
+        typeof e.date === "string"
           ? e.date
           : new Date(e.date).toISOString().split("T")[0]
-      }));
+    }));
 
-      setAllEvents(formatted);
+  useEffect(() => {
+    const load = async () => {
+      const events = await EventListService.getAll();
+      setAllEvents(formatEvents(events));
       setLoading(false);
     };
 
-    loadEvents();
+    load();
   }, []);
 
-  const addEvent = async (newEvent: Event) => {
-    await EventListService.add(newEvent);
+  const addEvent = async (newEvent: Omit<Event, "id">) => {
+    const token = await getToken();
+    await EventListService.add(newEvent, token ?? null);
+
     const updated = await EventListService.getAll();
-
-    const formatted = updated.map(e => ({
-      ...e,
-      date: typeof e.date === "string"
-        ? e.date
-        : new Date(e.date).toISOString().split("T")[0]
-    }));
-
-    setAllEvents(formatted);
+    setAllEvents(formatEvents(updated));
   };
 
   const removeEvent = async (id: number) => {
-    await EventListService.delete(id);
+    const token = await getToken();
+    await EventListService.delete(id, token ?? null);
+
     const updated = await EventListService.getAll();
-
-    const formatted = updated.map(e => ({
-      ...e,
-      date: typeof e.date === "string"
-        ? e.date
-        : new Date(e.date).toISOString().split("T")[0]
-    }));
-
-    setAllEvents(formatted);
+    setAllEvents(formatEvents(updated));
   };
 
   return { allEvents, loading, addEvent, removeEvent };

@@ -8,14 +8,12 @@ datasource db {
 }
 
 // USER MODEL
-// We store Clerk's user ID so backend can link data to a user
 model User {
   id          Int      @id @default(autoincrement())
-  clerkUserId String   @unique   // Clerk user identifier
+  clerkUserId String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relation: One user can create many events
   events      Event[]
 }
 
@@ -38,7 +36,6 @@ model UserCategoryPreference {
 }
 
 // EVENT MODEL
-// Added userClerkId + relation to User
 model Event {
   id          Int       @id @default(autoincrement())
   title       String
@@ -49,13 +46,12 @@ model Event {
   categoryId  Int?
   category    Category? @relation(fields: [categoryId], references: [id])
 
-  // This field is added as Event belongs to a logged-in user
-  userId      Int?                    // local FK field
-  user        User? @relation(fields: [userId], references: [id])  
-  // This is mainly responsible for linking each event to the correct Clerk user.
+  // FIX: Clerk user IDs are strings, not numbers
+  userId      String?
+  user        User? @relation(fields: [userId], references: [clerkUserId])
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // FEATURED EVENT MODEL
