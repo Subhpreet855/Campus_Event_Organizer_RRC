@@ -3,7 +3,6 @@ import * as categoryService from "../services/categoryService";
 import { successResponse } from "../models/responseModel";
 import type { Category } from "../services/categoryService";
 
-// Create a new category
 export const createCategory = async (
   req: Request,
   res: Response,
@@ -39,23 +38,23 @@ export const getCategoryById = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-    try {
-      const id = Number.parseInt(req.params.id, 10);
-      const category = await categoryService.getCategoryById(id);
+  try {
+    const id = Number.parseInt(req.params.id, 10);
+    const category = await categoryService.getCategoryById(id);
 
-      if (!category) {
-        res
-          .status(404)
-          .json(successResponse(null, "Category not found"));
-        return;
-      }
-
+    if (!category) {
       res
-        .status(200)
-        .json(successResponse(category, "Category fetched successfully"));
-    } catch (error) {
-      next(error);
+        .status(404)
+        .json(successResponse(null, "Category not found"));
+      return;
     }
+
+    res
+      .status(200)
+      .json(successResponse(category, "Category fetched successfully"));
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updateCategory = async (
@@ -85,6 +84,42 @@ export const deleteCategory = async (
     res
       .status(200)
       .json(successResponse(null, "Category deleted successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserCategoryPreferences = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId } = req.auth;
+    const data = await categoryService.getUserCategoryPreferences(userId);
+    res
+      .status(200)
+      .json(successResponse(data, "User category preferences fetched"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserCategoryPreferences = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId } = req.auth;
+    const { categories } = req.body;
+    const updated = await categoryService.updateUserCategoryPreferences(
+      userId,
+      categories
+    );
+    res
+      .status(200)
+      .json(successResponse(updated, "User category preferences updated"));
   } catch (error) {
     next(error);
   }
